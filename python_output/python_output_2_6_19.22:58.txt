@@ -1,0 +1,3 @@
+Question 1:
+	H.Influenzae frequencies: {'T': 564241, 'A': 567623, 'G': 347436, 'C': 350723}
+	T.Aquaticus frequencies:  {'G': 732676, 'T': 342558, 'C': 737506, 'A': 346223}
