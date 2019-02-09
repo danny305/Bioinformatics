@@ -1,18 +1,23 @@
 from collections import Counter
 from datetime import datetime
-from itertools import product
+from itertools import product, permutations
 from difflib import SequenceMatcher
+from Bio import pairwise2
 import regex as re
+
 
 
 class DNA_Analysis():
 
     native_nuc_letters = 'ACGT'
+    start_codon ='ATG'
+    stop_codons = ('TAA', 'TAG', 'TGA')
 
     def __init__(self,file_path, native_nuc_only=True):
         self.inp_file = file_path
         self.native_nuc_only = native_nuc_only
         self.all_nuc_letters = self.get_all_nuc_letters_in_file()
+        self.dna_seq = self.get_dna_seq()
         self.dna_length = self.calc_genome_length()
         self.mono_nuc_freq = self.set_mono_nuc_freq()
         self.di_nuc_freq = self.set_di_nuc_freq()
@@ -32,6 +37,30 @@ class DNA_Analysis():
                 return ''.join(letter for letter in inp_file.read() if letter in 'ATCG')
             else:
                 return ''.join(letter for letter in inp_file.read() if not (letter == '\n'))
+
+
+
+    def get_gene_region_indices(self,min_peptide_len=50):
+        '''
+        This will return all possible gene substring indices as a tuple (start_codon, stop_codon).
+        To be a match, the gene must transcribe a peptide that is at least 50 AA (default) in length and the start
+        and stop codon must be in the same reading frame.
+        '''
+        min_nuc_len = min_peptide_len * 30
+
+        gene_start = re.compile('ATG', re.MULTILINE | re.IGNORECASE)
+        gene_stop = re.compile('TAA|TAG|TGA', re.MULTILINE | re.IGNORECASE)
+
+        all_start_codons = [codon.start() for codon in gene_start.finditer(self.dna_seq,  overlapped=True)]
+        all_stop_codons = [codon.start() for codon in gene_stop.finditer(self.dna_seq,  overlapped=True)]
+
+        return [(start_codon, stop_codon)
+                    for start_codon in all_start_codons
+                        for stop_codon in all_stop_codons
+                            if (stop_codon-start_codon) >= min_nuc_len and (stop_codon-start_codon)%3 == 0]
+
+
+
 
     def get_all_nuc_letters_in_file(self):
         '''
@@ -132,17 +161,22 @@ class DNA_Analysis():
 
     # Question 5
     #ToDo I need to figure out why the sequence matcher is not matching any substrings.
-    def gene_in_dna(self,gene):
+    def is_gene_in_dna(self, gene):
         if isinstance(gene, DNA_Analysis):
-            match = SequenceMatcher(a=gene.get_dna_seq(), b=self.get_dna_seq())
+            print('gene is a DNA_Analysis object.')
+
+            alignment = pairwise2.align.localxx(gene.get_dna_seq()[:25], self.get_dna_seq()[:50])
+            # match = SequenceMatcher()
+            # match.set_seqs(a=gene.get_dna_seq()[:50], b=self.get_dna_seq()[:150])
         elif isinstance(gene, str):
+            #alignment = pairwise2.align.localms(gene, self.get_dna_seq(), 2, -1, -.5, -.1)
             match = SequenceMatcher(a=gene, b=self.get_dna_seq())
         else:
             raise TypeError('gene argument must be an instance of DNA_Analysis or a '
                             'string of nucleotides.')
-        longest_match = match.get_matching_blocks()
 
-        print('Longest match length:',match.ratio())
+        # print('Longest match length:', alignment[0])
+        print('Longest match length:', match.get_matching_blocks())
         #print('Longest match gene %:', len(longest_match)/gene.dna_length)
 
 
@@ -188,26 +222,46 @@ if __name__=='__main__':
     # aquaticus_non_native = DNA_Analysis.t_aquaticus(native_nuc_only=False)
 
     mystery_gene_1 = DNA_Analysis('MysteryGene1.txt')
+    mystery_gene_2 = DNA_Analysis('MysteryGene2.txt')
+    mystery_gene_3 = DNA_Analysis('MysteryGene3.txt')
+
+    #influenzae_native.get_gene_region_indices()
+    mystery_gene_1.get_gene_region_indices()
 
     # This is for question 4 & 5
-    print('Influenzae Expected Freq:', influenzae_native.exp_di_nuc_freq())
-    print('Influenzae Actual Freq:  ', influenzae_native.di_nuc_freq)
+    # print('Influenzae Expected Freq:', influenzae_native.exp_di_nuc_freq())
+    # print('Influenzae Actual Freq:  ', influenzae_native.di_nuc_freq)
+    #
+    # print('\n\n',240*'*', '\n\n')
+    #
+    # print('Aquaticus Expected Freq:', aquaticus_native.exp_di_nuc_freq())
+    # print('Aquaticus Actual Freq:  ', aquaticus_native.di_nuc_freq)
+    #
+    # print('\n\n',240*'*', '\n\n')
+    #
+    # print("Mystery Gene 1 expected Freq:", mystery_gene_1.exp_di_nuc_freq())
+    # print("Mystery Gene 1 Actual Freq:  ", mystery_gene_1.di_nuc_freq)
+    #
+    # print('\n\n', 240 * '*', '\n\n')
+    #
+    # print("Mystery Gene 2 expected Freq:", mystery_gene_2.exp_di_nuc_freq())
+    # print("Mystery Gene 2 Actual Freq:  ", mystery_gene_2.di_nuc_freq)
+    #
+    # print('\n\n', 240 * '*', '\n\n')
+    #
+    # print("Mystery Gene 3 expected Freq:", mystery_gene_3.exp_di_nuc_freq())
+    # print("Mystery Gene 3 Actual Freq:  ", mystery_gene_3.di_nuc_freq)
+    #
+    # print('\n\n', 240 * '*', '\n\n')
 
-    print('\n\n',240*'*', '\n\n')
 
-    print('Aquaticus Expected Freq:', aquaticus_native.exp_di_nuc_freq())
-    print('Aquaticus Actual Freq:  ', aquaticus_native.di_nuc_freq)
+    print('Influenza genome length:', influenzae_native.dna_length)
+    # print('Mystery gene 1 length:  ', mystery_gene_1.dna_length)
+    # print('Mystery gene 2 length:  ', mystery_gene_2.dna_length)
+    # print('Mystery gene 3 length:  ', mystery_gene_3.dna_length)
 
-    print('\n\n',240*'*', '\n\n')
 
-    print("Mystery Gene 1 expected Freq:", mystery_gene_1.exp_di_nuc_freq())
-    print("Mystery Gene 1 Actual Freq:  ", mystery_gene_1.di_nuc_freq)
-
-    print('\n\n', 240 * '*', '\n\n')
-
-    print(influenzae_native.dna_length)
-    print(mystery_gene_1.dna_length)
-    influenzae_native.gene_in_dna(mystery_gene_1)
+    # influenzae_native.is_gene_in_dna(mystery_gene_1)
 
     # print(influenzae_native.mono_nuc_freq)
     # print(influenzae_non_native.mono_nuc_freq)
