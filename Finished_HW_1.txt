@@ -187,3 +187,74 @@ pairs.The density of genes in E. Coli is approximately 1,022 bp per gene. This i
  ********************************************************************************************************* 
 
 
+Question 8
+
+
+ ********************************************************************************************************* 
+
+
+Tryptophan is the amino acid that is least likely to be substituted by another. It has a negative
+substitution score with every amino acid besides phenylalanine and tyrosine, the other 2 aromatic amino
+acids. These scores are 1 and 2 respectively, however, with itself its blossum score is 15. Thus, it
+really does not like to be substituted by other aromatic amino acids when compared to self.
+
+Other amino acids that show a similar profile to tryptophan are glycine and cysteine. For cysteine, its
+score with itself is 13 compared to tryptophan's 15. However, unlike tryptophan it does not have a
+positive blossum score for any other amino acid, but its score values are not as negative as tryptophan.
+Like cysteine, glycine does not have a positive blossum score for any substitution except for itself.
+However, the blossum score with itself is only an 8 and its most positive blossum score is 3 zero values
+with alanine, serine, and asparagine.
+
+
+ ********************************************************************************************************* 
+
+
+Question 9
+
+
+ ********************************************************************************************************* 
+
+
+Polar amino acids are most easily substituted by other polar amino acids. Specifically, asparagine and
+glutamine. Especially if you consider substitution scores of only non-negative numbers (including 0),
+these 2 amino acids scored the highest each with 9. In close second, lysine, histidine, and glutamic acid
+each scored 7 and serine scored 8.
+
+
+ ********************************************************************************************************* 
+
+
+Question 10
+
+
+ ********************************************************************************************************* 
+
+
+The most disfavored substitutions are: tryptophan to aspartic acid, tryptophan to cysteine, and
+phenylalanine to aspartic acid. The trend here is the substitution of an aromatic for a short acidic
+residue is highly disfavored.
+
+
+ ********************************************************************************************************* 
+
+
+Question 11
+
+
+ ********************************************************************************************************* 
+
+
+The average blossum score between DEH: 1/3
+
+The average blossum score between VIL: 7/3
+
+The average blossum score between the 2 groups: -11/3
+
+Substitution between polar amino acids and greasy amino acids is favorable. Subsitution from a polar to a
+nonpolar or vice-versa is not favorable. This is due to their chemical properties and roles within a
+protein.
+
+
+ ********************************************************************************************************* 
+
+

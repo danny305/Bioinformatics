@@ -135,15 +135,17 @@ The p-values provided are from a "Chi-Square Goodness of Fit" test conducted on 
 frequencies between each gene and each genome. The comparison of the Hinfluenzae genome with mystery gene
 1 and 3 provided the respective p-values:.915 and .999. Thus, we cannot reject the null hypothesis that
 their is a statistically significant difference between their observed dinucleotide frequencies. Hence,
-mystery gene 1 and 3 are in the Hinfluenzae genome.
+mystery gene 1 and 3 are in the Hinfluenzae genome. The p-value for mystery gene 2 was statistically
+significant (< 0.05). Thus, we reject the null hypothesis that there is not a difference between the
+observed dinucleotide frequencies of mystery gene 2 and Hinfluenzae.
 
 The comparison of the Taquaticus genome with the 3 mystery gene provided 2 p-values that are
 statistically significant (< 0.05): gene 1 and 3. Thus, we can reject the null hypothesis that that their
-is a statistically significant difference between their observed dinucleotide frequencies. This makes
-perfect sense because we concluded that these genes were present in Hinfluenzae. The p-value for mystery
-gene 2 is 1.000; the null hypothesis cannot be rejected and mystery gene 2 observed dinucleotide
-frequencies show no statistical difference from the the dinucleotide frequencies observed in Taquaticus.
-Hence, mystery gene 2 is in the Taquaticus genome.
+is no difference between their observed dinucleotide frequencies. This makes perfect sense because we
+concluded that these genes were present in Hinfluenzae. The p-value for mystery gene 2 is 1.000; the null
+hypothesis cannot be rejected and mystery gene 2 observed dinucleotide frequencies show no difference
+from the the dinucleotide frequencies observed in Taquaticus. Hence, mystery gene 2 is in the Taquaticus
+genome.
 
 
  ********************************************************************************************************* 
