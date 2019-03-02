@@ -16,8 +16,8 @@ from textwrap import fill
 from scipy.stats import chisquare
 from contextlib import redirect_stdout
 
-
 import regex as re
+
 
 
 
@@ -488,5 +488,4 @@ class DNA_Analysis():
 
 if __name__=="__main__":
     DNA_Analysis.print_HW_1_to_file()
-
 
