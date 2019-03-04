@@ -158,11 +158,25 @@ class TM_HMM():
 
 
     def run_viterbi(self,obs_seq=174.3):
+
+        aa_encoder = LabelEncoder()
+        aa_labels = aa_encoder.fit_transform(self.em_df.columns)
+        aa_num_map = {key: value for key, value in zip(self.em_df.columns, aa_labels)}
+        num_aa_map = {key: value for key, value in zip(aa_labels, self.em_df.columns)}
+
+        state_encoder = LabelEncoder()
+        state_labels = state_encoder.fit_transform(self.init_states.index)
+        num_state_map = {key:value for key,value in zip(state_labels, self.init_states.index)}
+        print(num_state_map)
+
         if obs_seq == 174.3:
             seq = TM_HMM.obs_seq
         else:
             seq = obs_seq
 
+        seq_map = np.array([aa_num_map[aa] for aa in seq])
+        print(seq)
+        print(seq_map)
         seq_len = len(seq)
 
         self.init_prob = self.init_states.values
@@ -172,7 +186,7 @@ class TM_HMM():
         nStates = len(self.hidden_states)
 
         self.path = np.chararray(seq_len)
-        ipath = np.array(seq_len,dtype=int)
+        ipath = np.zeros(seq_len,dtype=int)
 
         delta = np.zeros((nStates,seq_len))
         gamma = np.zeros((nStates,seq_len))
@@ -182,6 +196,18 @@ class TM_HMM():
         print(self.init_prob)
         print(self.trans_prob)
         print(self.em_prob)
+        print(self.em_df.columns)
+
+
+
+
+        print(aa_num_map)
+        print(num_aa_map)
+
+        self.em_df.columns
+
+
+
         delta[:,0] = self.init_prob * self.em_df.loc[:,seq[0]]
         gamma[:,0] = 0
 
@@ -189,7 +215,7 @@ class TM_HMM():
             for state in range(nStates):
                 delta[state,pos] = np.max(
                     delta[:, pos-1] * self.trans_prob[:,state]
-                ) * self.em_df.loc[state, seq[pos]]
+                ) * self.em_prob[state, seq_map[pos]]
 
                 gamma[state, pos] = np.argmax(
                     delta[:, pos-1] * self.trans_prob[:,state]
@@ -197,11 +223,21 @@ class TM_HMM():
 
                 print(f'state={state}, pos={pos}: gamma[{state},{pos}] = {gamma[state,pos]}')
 
-        print(delta)
+        print(delta.shape)
         print(gamma)
 
 
+        print('Starting Backtrace')
+        print(seq_len)
+        ipath[seq_len-1] = np.argmax(delta[:,seq_len-1])
+        print(ipath)
 
+        for pos in range(seq_len-2, -1, -1):
+            ipath[pos] = gamma[ipath[pos+1],[pos+1]]
+            print(f'ipath[{pos}] = {ipath[pos]}')
+
+        path = ''.join(num_state_map[pos] for pos in ipath)
+        print(path)
 
 
 
