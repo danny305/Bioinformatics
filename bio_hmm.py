@@ -1,7 +1,6 @@
 
 from Bio import SeqIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from pprint import pprint
 from collections import Counter
 from itertools import product
 from sklearn.preprocessing import LabelEncoder
@@ -11,13 +10,12 @@ import numpy as np
 import pandas as pd
 import regex as re
 import networkx as nx
-import matplotlib.pyplot as plt
+
 
 
 class TM_HMM():
 
     obs_seq = 'KNSFFFFFFFLIII'
-    _no_value = object()
 
     def __init__(self,
                  sol_seq_file='dna_files/hw2/soluble_sequences.fasta',
@@ -67,10 +65,18 @@ class TM_HMM():
 
 
     def _calc_state_init_prob(self):
-        self.state_counts = Counter(state for state in self._state_seq if not state=='\n')
-        self.state_init_prob =  {
-            key: round(value/self._total_states, 5) for key,value in self.state_counts.items()
+        self.total_proteins = len(self._state_seq.split('\n'))
+        self.state_counts = Counter(state for state in self._state_seq if not state == '\n')
+        self.state_init_prob = {
+            key:round(value/self.total_proteins,5)
+            for key, value in Counter(line[0] for line in self._state_seq.split('\n')).items()
         }
+
+
+
+        # self.state_init_prob =  {
+        #     key: round(value/self._total_states, 5) for key,value in self.state_counts.items()
+        # }
 
 
     def _calc_state_digram_count(self):
@@ -189,7 +195,7 @@ class TM_HMM():
         ipath = np.zeros(seq_len,dtype=int)
 
         delta = np.zeros((nStates,seq_len))
-        gamma = np.zeros((nStates,seq_len))
+        viterbi = np.zeros((nStates,seq_len))
 
         print('Printing all values:')
         print(seq)
@@ -209,7 +215,7 @@ class TM_HMM():
 
 
         delta[:,0] = self.init_prob * self.em_df.loc[:,seq[0]]
-        gamma[:,0] = 0
+        viterbi[:,0] = 0
 
         for pos in range(1, seq_len):
             for state in range(nStates):
@@ -217,14 +223,14 @@ class TM_HMM():
                     delta[:, pos-1] * self.trans_prob[:,state]
                 ) * self.em_prob[state, seq_map[pos]]
 
-                gamma[state, pos] = np.argmax(
+                viterbi[state, pos] = np.argmax(
                     delta[:, pos-1] * self.trans_prob[:,state]
                 )
 
-                print(f'state={state}, pos={pos}: gamma[{state},{pos}] = {gamma[state,pos]}')
+                print(f'state={state}, pos={pos}: gamma[{state},{pos}] = {viterbi[state,pos]}')
 
         print(delta.shape)
-        print(gamma)
+        print(viterbi)
 
 
         print('Starting Backtrace')
@@ -233,12 +239,17 @@ class TM_HMM():
         print(ipath)
 
         for pos in range(seq_len-2, -1, -1):
-            ipath[pos] = gamma[ipath[pos+1],[pos+1]]
+            ipath[pos] = viterbi[ipath[pos+1],[pos+1]]
             print(f'ipath[{pos}] = {ipath[pos]}')
 
         path = ''.join(num_state_map[pos] for pos in ipath)
         print(path)
 
+
+    def _calc_avg_tm_segments(self):
+        num_tm_regions = [len(re.findall('S[T]+?S',line)) for line in self._state_seq.split('\n')]
+        avg_tm_region = np.mean(num_tm_regions)
+        print(avg_tm_region)
 
 
 
@@ -253,6 +264,7 @@ if __name__ == "__main__":
     print(tm_obj.trans_df)
     print(tm_obj.em_df)
     print(tm_obj.run_viterbi())
+    print(tm_obj._calc_avg_tm_segments())
 
 #
 #
