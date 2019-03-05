@@ -201,8 +201,9 @@ class TM_HMM():
         print(seq)
         print(self.init_prob)
         print(self.trans_prob)
+        print('trans_prob inv:', self.trans_prob.T)
         print(self.em_prob)
-        print(self.em_df.columns)
+        print(self.em_df['K'])
 
 
 
@@ -219,28 +220,32 @@ class TM_HMM():
 
         for pos in range(1, seq_len):
             for state in range(nStates):
+                print('delta:', delta[:, pos - 1])
+                print('trans_prob:', self.trans_prob[state,:])
+                print('product: ', delta[:, pos-1] * self.trans_prob[state,:])
+                print('em_prob:', self.em_prob[state, seq_map[pos]])
                 delta[state,pos] = np.max(
-                    delta[:, pos-1] * self.trans_prob[:,state]
+                    delta[:, pos-1] * self.trans_prob[state,:]
                 ) * self.em_prob[state, seq_map[pos]]
-
+                print('Max(*em_prob):', delta[state,pos])
                 viterbi[state, pos] = np.argmax(
-                    delta[:, pos-1] * self.trans_prob[:,state]
+                    delta[:, pos-1] * self.trans_prob[state,:]
                 )
+                print('max_position:', viterbi[state, pos])
 
-                print(f'state={state}, pos={pos}: gamma[{state},{pos}] = {viterbi[state,pos]}')
+                print(f'state={state}, pos={pos}: viterbi[{state},{pos}] = {viterbi[state,pos]}')
 
-        print(delta.shape)
         print(viterbi)
 
 
         print('Starting Backtrace')
-        print(seq_len)
+        #print(seq_len)
         ipath[seq_len-1] = np.argmax(delta[:,seq_len-1])
-        print(ipath)
+        #print(ipath)
 
         for pos in range(seq_len-2, -1, -1):
             ipath[pos] = viterbi[ipath[pos+1],[pos+1]]
-            print(f'ipath[{pos}] = {ipath[pos]}')
+            #print(f'ipath[{pos}] = {ipath[pos]}')
 
         path = ''.join(num_state_map[pos] for pos in ipath)
         print(path)
