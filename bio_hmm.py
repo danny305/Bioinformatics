@@ -173,7 +173,6 @@ class TM_HMM():
         state_encoder = LabelEncoder()
         state_labels = state_encoder.fit_transform(self.init_states.index)
         num_state_map = {key:value for key,value in zip(state_labels, self.init_states.index)}
-        print(num_state_map)
 
         if obs_seq == 174.3:
             seq = TM_HMM.obs_seq
@@ -181,8 +180,6 @@ class TM_HMM():
             seq = obs_seq
 
         seq_map = np.array([aa_num_map[aa] for aa in seq])
-        print(seq)
-        print(seq_map)
         seq_len = len(seq)
 
         self.init_prob = self.init_states.values
@@ -197,21 +194,16 @@ class TM_HMM():
         delta = np.zeros((nStates,seq_len))
         viterbi = np.zeros((nStates,seq_len))
 
-        print('Printing all values:')
-        print(seq)
-        print(self.init_prob)
-        print(self.trans_prob)
-        print('trans_prob inv:', self.trans_prob.T)
-        print(self.em_prob)
-        print(self.em_df['K'])
+        print('\n\nPrinting all values being used in viterbi:')
+        print('State map:', num_state_map, sep='\n', end='\n')
+        print('Observed seq:', seq, sep='\n', end='\n')
+        print('Obs_seq_map', seq_map, sep='\n', end='\n')
+        print('Initial prob:', self.init_states, sep='\n', end='\n')
+        print('Transition prob:', self.trans_df, sep='\n', end='\n')
+        print('Emission probability', self.em_df.head(), sep='\n', end='\n')
+        print('Emission prob of K (initial aa):', self.em_df['K'], sep='\n', end='\n')
 
 
-
-
-        print(aa_num_map)
-        print(num_aa_map)
-
-        self.em_df.columns
 
 
 
@@ -221,15 +213,15 @@ class TM_HMM():
         for pos in range(1, seq_len):
             for state in range(nStates):
                 print('delta:', delta[:, pos - 1])
-                print('trans_prob:', self.trans_prob[state,:])
-                print('product: ', delta[:, pos-1] * self.trans_prob[state,:])
+                print('trans_prob:', self.trans_prob[:, state])
+                print('product: ', delta[:, pos-1] * self.trans_prob[:, state])
                 print('em_prob:', self.em_prob[state, seq_map[pos]])
                 delta[state,pos] = np.max(
-                    delta[:, pos-1] * self.trans_prob[state,:]
+                    delta[:, pos-1] * self.trans_prob[:, state]
                 ) * self.em_prob[state, seq_map[pos]]
                 print('Max(*em_prob):', delta[state,pos])
                 viterbi[state, pos] = np.argmax(
-                    delta[:, pos-1] * self.trans_prob[state,:]
+                    delta[:, pos-1] * self.trans_prob[:, state]
                 )
                 print('max_position:', viterbi[state, pos])
 
