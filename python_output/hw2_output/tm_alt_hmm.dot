@@ -1,0 +1,25 @@
+digraph  {
+Begin;
+Soluble;
+Transmembrane;
+Soluble_1;
+Transmembrane_1;
+Soluble_2;
+Transmembrane_2;
+Begin -> Soluble  [key=0];
+Begin -> Transmembrane  [key=0];
+Soluble -> Soluble  [key=0];
+Soluble -> Soluble_1  [key=0];
+Transmembrane -> Transmembrane  [key=0];
+Transmembrane -> Transmembrane_1  [key=0];
+Soluble_1 -> Soluble_1  [key=0];
+Soluble_1 -> Soluble_2  [key=0];
+Transmembrane_1 -> Transmembrane_1  [key=0];
+Transmembrane_1 -> Transmembrane_2  [key=0];
+Soluble_2 -> Soluble_2  [key=0];
+Soluble_2 -> Transmembrane  [key=0];
+Soluble_2 -> Soluble  [key=0];
+Transmembrane_2 -> Transmembrane_2  [key=0];
+Transmembrane_2 -> Soluble  [key=0];
+Transmembrane_2 -> Soluble_2  [key=0];
+}

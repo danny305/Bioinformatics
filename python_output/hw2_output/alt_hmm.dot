@@ -1,0 +1,26 @@
+digraph  {
+Begin;
+"Random Coil";
+Alpha_1;
+Alpha_2;
+Alpha_3;
+Beta_1;
+Beta_2;
+Beta_3;
+Begin -> "Random Coil"  [key=0];
+"Random Coil" -> Alpha_1  [key=0];
+"Random Coil" -> "Random Coil"  [key=0];
+"Random Coil" -> Beta_1  [key=0];
+Alpha_1 -> Alpha_2  [key=0];
+Alpha_1 -> Alpha_1  [key=0];
+Alpha_2 -> Alpha_3  [key=0];
+Alpha_2 -> Alpha_2  [key=0];
+Alpha_3 -> "Random Coil"  [key=0];
+Alpha_3 -> Alpha_3  [key=0];
+Beta_1 -> Beta_2  [key=0];
+Beta_1 -> Beta_1  [key=0];
+Beta_2 -> Beta_3  [key=0];
+Beta_2 -> Beta_2  [key=0];
+Beta_3 -> "Random Coil"  [key=0];
+Beta_3 -> Beta_3  [key=0];
+}

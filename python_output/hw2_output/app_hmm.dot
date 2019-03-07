@@ -1,0 +1,9 @@
+digraph  {
+"Hormone in blood";
+"Hormone-Receptor complex";
+"Expression of Gene/Cell Response";
+"Hormone in blood" -> "Hormone-Receptor complex"  [key=0, label="Trans prob"];
+"Hormone in blood" -> "Expression of Gene/Cell Response"  [key=0, label="Em prob"];
+"Hormone-Receptor complex" -> "Hormone in blood"  [key=0, label="Trans prob"];
+"Hormone-Receptor complex" -> "Expression of Gene/Cell Response"  [key=0, label="Em prob"];
+}
